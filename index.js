@@ -12,9 +12,16 @@ const fs = require('fs')
 const Place = require('./models/Place.js')
 require('dotenv').config();
 const Booking = require('./models/Booking.js')
-const PORT = process.env.PORT || 4000 
 
 
+const corsOptions = {
+    origin: function (origin, callback) {
+    callback(null, true); // Allow all origins
+    },
+    credentials: true // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json())
 app.use(cookieParser())
@@ -23,18 +30,8 @@ app.use('/uploads',express.static(__dirname + '/uploads'))
 const bcryptSalt = bcrypt.genSaltSync(10)
 const jwtSecret = 'secret'
 
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests from any origin
-        callback(null, origin);
-    },
-    credentials: true
-}));
 
 
-app.get('/test', (req,res) => {
-    res.json("Test Ok");
-})
 
 mongoose.connect(process.env.MONGO_URL)
 
@@ -67,11 +64,13 @@ app.post('/register', async (req,res) => {
 })
 
 app.post("/login", async (req,res) => {
+    console.log("I got hit");
     const { email , password} = req.body;
   
     const userDoc = await User.findOne({email})
     if(userDoc)
     {
+      
         const passOk = bcrypt.compareSync(password,userDoc.password)
         if(passOk)
         {
@@ -81,7 +80,7 @@ app.post("/login", async (req,res) => {
                 name : userDoc.name} , 
                 jwtSecret , {} , (err,token) => {
                 if(err) throw err;
-                res.cookie('token',token,{ httpsOnly : true , secure : true, sameSite : 'none'}).json( {userDoc , token});
+                res.cookie('token',token).json( {userDoc , token});
             })   
         }
         else
@@ -133,6 +132,7 @@ app.post('/upload-by-link', async (req,res) => {
         console.log(e.message)
     }
 })
+
 
 const photosMiddleware = multer({ dest : 'uploads/' })
 app.post('/upload', photosMiddleware.array('photos',100),(req,res) => {
@@ -233,5 +233,4 @@ app.get('/bookings', async(req,res) => {
 
 })
 
-
-app.listen(PORT)
+app.listen(4000);
