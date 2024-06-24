@@ -81,7 +81,7 @@ app.post("/login", async (req,res) => {
                 name : userDoc.name} , 
                 jwtSecret , {} , (err,token) => {
                 if(err) throw err;
-                res.cookie('token',token,{ httpOnly : true , secure : true, sameSite : 'none'}).json( {userDoc , token});
+                res.cookie('token',token,{ httpsOnly : true , secure : true, sameSite : 'none'}).json( {userDoc , token});
             })   
         }
         else
