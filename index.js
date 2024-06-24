@@ -64,7 +64,7 @@ app.post('/register', async (req,res) => {
 })
 
 app.post("/login", async (req,res) => {
-    console.log("I got hit");
+    
     const { email , password} = req.body;
   
     const userDoc = await User.findOne({email})
@@ -72,21 +72,27 @@ app.post("/login", async (req,res) => {
     {
       
         const passOk = bcrypt.compareSync(password,userDoc.password)
-        if(passOk)
-        {
+        if (passOk) {
             jwt.sign({
-                email : userDoc.email , 
-                id : userDoc._id , 
-                name : userDoc.name} , 
-                jwtSecret , {} , (err,token) => {
-                if(err) throw err;
-                res.cookie('token',token).json( {userDoc , token});
-            })   
-        }
-        else
-        {
+                email: userDoc.email, 
+                id: userDoc._id, 
+                name: userDoc.name
+            }, 
+            jwtSecret, 
+            {}, 
+            (err, token) => {
+                if (err) throw err;
+                res.cookie('token', token, {
+                    httpOnly: true,      // Prevents client-side JavaScript from accessing the cookie
+                    secure: true,        // Ensures the cookie is sent only over HTTPS
+                    sameSite: 'Strict',  // Ensures the cookie is sent only for same-site requests (adjust as needed)
+                    maxAge: 24 * 60 * 60 * 1000 // Sets the cookie to expire in 24 hours (adjust as needed)
+                }).json({ userDoc, token }); // Send a JSON response with the user document and token
+            });
+        } else {
             res.status(422).json('pass not ok');
         }
+        
     }
     else
     {
