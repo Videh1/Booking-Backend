@@ -24,8 +24,13 @@ const bcryptSalt = bcrypt.genSaltSync(10)
 const jwtSecret = 'secret'
 
 app.use(cors({
-    origin : ["*"]
+    origin: function (origin, callback) {
+        // Allow requests from any origin
+        callback(null, origin);
+    },
+    credentials: true
 }));
+
 
 app.get('/test', (req,res) => {
     res.json("Test Ok");
@@ -67,7 +72,6 @@ app.post("/login", async (req,res) => {
     const userDoc = await User.findOne({email})
     if(userDoc)
     {
-      
         const passOk = bcrypt.compareSync(password,userDoc.password)
         if(passOk)
         {
@@ -129,7 +133,6 @@ app.post('/upload-by-link', async (req,res) => {
         console.log(e.message)
     }
 })
-
 
 const photosMiddleware = multer({ dest : 'uploads/' })
 app.post('/upload', photosMiddleware.array('photos',100),(req,res) => {
