@@ -90,7 +90,7 @@ app.post("/login", async (req,res) => {
                 }).json({ userDoc, token }); 
             });
         } else {
-            res.status(422).json('pass not ok');    -
+            res.status(422).json('pass not ok');    
         }
         
     }
