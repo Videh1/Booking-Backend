@@ -83,14 +83,14 @@ app.post("/login", async (req,res) => {
             (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token, {
-                    httpOnly: true,      // Prevents client-side JavaScript from accessing the cookie
-                    secure: true,        // Ensures the cookie is sent only over HTTPS
-                    sameSite: 'Strict',  // Ensures the cookie is sent only for same-site requests (adjust as needed)
-                    maxAge: 24 * 60 * 60 * 1000 // Sets the cookie to expire in 24 hours (adjust as needed)
-                }).json({ userDoc, token }); // Send a JSON response with the user document and token
+                    httpOnly: true,      
+                    secure: true,        
+                    sameSite: 'lax',  
+                    maxAge: 24 * 60 * 60 * 1000 
+                }).json({ userDoc, token }); 
             });
         } else {
-            res.status(422).json('pass not ok');
+            res.status(422).json('pass not ok');    -
         }
         
     }
