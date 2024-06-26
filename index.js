@@ -83,9 +83,9 @@ app.post("/login", async (req,res) => {
             (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token, {
-                    httpOnly: true,      
+                    httpOnly:false,      
                     secure: false,        
-                    sameSite: 'lax',  
+                    
                     maxAge: 24 * 60 * 60 * 1000 
                 }).json({ userDoc, token }); 
             });
