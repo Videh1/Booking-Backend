@@ -82,7 +82,6 @@ app.post("/login", async (req, res) => {
 
           // Set the cookie using setHeader
           res.setHeader('Set-Cookie', cookieOptions);
-          res.setHeader("")
           res.json({ userDoc, token });
         }
       );
