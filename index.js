@@ -71,16 +71,19 @@ app.post("/login", async (req, res) => {
         {},
         (err, token) => {
           if (err) throw err;
-          res
-            .cookie("token", token, {
-              httpOnly: true, // Not accessible via JavaScript
-              secure: false, // Should be true in production with HTTPS
-              sameSite: "none", // Allows cross-origin cookies
-              signed: true, // Signed cookieP
 
-              maxAge: 24 * 60 * 60 * 1000,
-            })
-            .json({ userDoc, token });
+          const cookieOptions = [
+            `token=${token}`,                // Cookie name and value
+            'Max-Age=900000',               // Cookie expiration time in seconds
+            'HttpOnly',                  // Cookie is not accessible via JavaScript
+            'Path=/',                    // Cookie is accessible on the root path
+            'SameSite=None',             // Cookie is allowed in cross-origin requests
+          ].join('; ');
+
+          // Set the cookie using setHeader
+          res.setHeader('Set-Cookie', cookieOptions);
+          res.setHeader("")
+          res.json({ userDoc, token });
         }
       );
     } else {
